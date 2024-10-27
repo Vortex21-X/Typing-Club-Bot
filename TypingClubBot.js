@@ -1,4 +1,4 @@
- /**
+/**
  * This script types for you automatically on www.typingclub.com:
  * 1. Open the website
  * 2. Blaze past the tutorials
@@ -40,9 +40,15 @@ function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
-async function autoPlay(finish) {
+async function autoPlay() {
   const chrs = getTargetCharacters();
-  for (let i = 0; i < chrs.length - (!finish); ++i) {
+  if (chrs.length === 0) {
+    // No characters to type, move to the next level
+    goToNextLevel();
+    return;
+  }
+
+  for (let i = 0; i < chrs.length; ++i) {
     const c = chrs[i];
     recordKey(c);
     await sleep(Math.random() * (maxDelay - minDelay) + minDelay);
@@ -55,11 +61,15 @@ async function autoPlay(finish) {
 // Function to click the button that moves to the next level
 function goToNextLevel() {
   // Wait a bit after typing before attempting to go to the next level
-  setTimeout(() => {
+  setTimeout(async () => {
     const nextButton = Array.from(document.querySelectorAll('span')).find(el => el.textContent === '→');
     if (nextButton) {
       nextButton.click(); // Simulate click to proceed to the next level
       console.log('Moving to next level...');
+
+      // Wait for the next level to load before starting the typing again
+      await sleep(1000); // Adjust this delay if necessary
+      autoPlay(); // Call autoPlay again for the next level
     } else {
       console.log('Next level button not found.');
     }
@@ -70,4 +80,4 @@ function goToNextLevel() {
 // go!
 // ############################################################################################################
 
-autoPlay(true);
+autoPlay();
